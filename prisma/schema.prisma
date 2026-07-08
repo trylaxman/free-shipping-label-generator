@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model ShippingLabel {
+  id            String   @id @default(cuid())
+
+  senderName    String
+  senderPhone   String?
+  senderAddress String
+  senderCity    String?
+  senderState   String?
+  senderPincode String?
+
+  receiverName    String
+  receiverPhone   String?
+  receiverAddress String
+  receiverCity    String?
+  receiverState   String?
+  receiverPincode String?
+
+  orderId      String?
+  productName  String
+  shippingDate String?
+  paymentMode  String
+
+  courierName String?
+  awb         String?
+
+  totalBoxes  Int
+  totalWeight Float
+
+  boxGroups Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
