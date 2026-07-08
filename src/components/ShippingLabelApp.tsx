@@ -92,9 +92,37 @@ export default function ShippingLabelApp() {
     const [generated, setGenerated] = useState(false);
     const [history, setHistory] = useState<SavedLabel[]>([]);
 
+    const HISTORY_KEY = "shipping-label-history-ids";
+
+    const getLocalHistoryIds = () => {
+        if (typeof window === "undefined") return [];
+
+        try {
+            return JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]") as string[];
+        } catch {
+            return [];
+        }
+    };
+
+    const saveHistoryId = (id: string) => {
+        const existingIds = getLocalHistoryIds();
+        const nextIds = [id, ...existingIds.filter((item) => item !== id)].slice(0, 10);
+
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(nextIds));
+
+        return nextIds;
+    };
+
     const loadHistory = async () => {
         try {
-            const res = await fetch("/api/shipping-labels");
+            const ids = getLocalHistoryIds();
+
+            if (!ids.length) {
+                setHistory([]);
+                return;
+            }
+
+            const res = await fetch(`/api/shipping-labels?ids=${ids.join(",")}`);
             const data = await res.json();
 
             if (data.success) {
@@ -189,7 +217,7 @@ export default function ShippingLabelApp() {
         setGenerated(true);
 
         try {
-            await fetch("/api/shipping-labels", {
+            const res = await fetch("/api/shipping-labels", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -197,8 +225,12 @@ export default function ShippingLabelApp() {
                 body: JSON.stringify(form),
             });
 
-            loadHistory();
+            const data = await res.json();
 
+            if (data.success && data.record?.id) {
+                saveHistoryId(data.record.id);
+                loadHistory();
+            }
         } catch (error) {
             console.error("Failed to save label", error);
         }
@@ -259,7 +291,7 @@ export default function ShippingLabelApp() {
                         </div>
 
                         <h1 className="max-w-xl text-4xl font-bold leading-tight">
-                            Generate 4×6 shipping labels in seconds
+                            Generate shipping labels in seconds
                         </h1>
 
                         <p className="mt-4 max-w-xl text-base leading-7 text-white/70">

@@ -1,15 +1,33 @@
-// src/app/api/shipping-labels/route.ts
-
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ShippingLabelForm } from "@/types/shipping-label";
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const idsParam = searchParams.get("ids");
+
+  if (!idsParam) {
+    return NextResponse.json({
+      success: true,
+      labels: [],
+    });
+  }
+
+  const ids = idsParam
+    .split(",")
+    .map((id) => id.trim())
+    .filter(Boolean)
+    .slice(0, 20);
+
   const labels = await prisma.shippingLabel.findMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
     orderBy: {
       createdAt: "desc",
     },
-    take: 20,
   });
 
   return NextResponse.json({
