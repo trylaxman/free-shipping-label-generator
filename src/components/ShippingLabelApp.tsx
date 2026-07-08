@@ -57,33 +57,36 @@ const initialForm: ShippingLabelForm = {
 };
 
 type SavedLabel = {
-    id: string;
+  id: string;
 
-    senderName: string;
-    senderPhone: string | null;
-    senderAddress: string;
-    senderCity: string | null;
-    senderState: string | null;
-    senderPincode: string | null;
+  senderName: string;
+  senderPhone: string | null;
+  senderAddress: string;
+  senderCity: string | null;
+  senderState: string | null;
+  senderPincode: string | null;
 
-    receiverName: string;
-    receiverPhone: string | null;
-    receiverAddress: string;
-    receiverCity: string | null;
-    receiverState: string | null;
-    receiverPincode: string | null;
+  receiverName: string;
+  receiverPhone: string | null;
+  receiverAddress: string;
+  receiverCity: string | null;
+  receiverState: string | null;
+  receiverPincode: string | null;
 
-    orderId: string | null;
-    productName: string;
-    shippingDate: string | null;
-    paymentMode: ShippingLabelForm["order"]["paymentMode"];
+  orderId: string | null;
+  productName: string;
+  shippingDate: string | null;
+  paymentMode: ShippingLabelForm["order"]["paymentMode"];
 
-    courierName: string | null;
-    awb: string | null;
+  courierName: string | null;
+  awb: string | null;
 
-    boxGroups: BoxGroup[];
+  totalBoxes: number;
+  totalWeight: number;
 
-    createdAt: string;
+  boxGroups: BoxGroup[];
+
+  createdAt: string;
 };
 
 export default function ShippingLabelApp() {
